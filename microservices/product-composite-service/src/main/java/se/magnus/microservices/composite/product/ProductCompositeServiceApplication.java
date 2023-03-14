@@ -10,9 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.actuate.health.CompositeReactiveHealthContributor;
-import org.springframework.boot.actuate.health.ReactiveHealthContributor;
-import org.springframework.boot.actuate.health.ReactiveHealthIndicator;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -20,10 +17,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
-import se.magnus.microservices.composite.product.services.ProductCompositeIntegration;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 @SpringBootApplication
 @ComponentScan("se.magnus")
@@ -54,9 +47,6 @@ public class ProductCompositeServiceApplication {
     String apiContactUrl;
     @Value("${api.common.contact.email}")
     String apiContactEmail;
-    @Autowired
-    ProductCompositeIntegration integration;
-
     @Autowired
     public ProductCompositeServiceApplication(
             @Value("${app.threadPoolSize:10}") Integer threadPoolSize,
@@ -98,18 +88,6 @@ public class ProductCompositeServiceApplication {
     public Scheduler publishEventScheduler() {
         LOG.info("Creates a messagingScheduler with connectionPoolSize = {}", threadPoolSize);
         return Schedulers.newBoundedElastic(threadPoolSize, taskQueueSize, "publish-pool");
-    }
-
-    @Bean
-    ReactiveHealthContributor coreServices() {
-
-        final Map<String, ReactiveHealthIndicator> registry = new LinkedHashMap<>();
-
-        registry.put("product", () -> integration.getProductHealth());
-        registry.put("recommendation", () -> integration.getRecommendationHealth());
-        registry.put("review", () -> integration.getReviewHealth());
-
-        return CompositeReactiveHealthContributor.fromMap(registry);
     }
 
     @Bean
