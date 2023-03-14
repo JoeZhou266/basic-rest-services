@@ -13,28 +13,28 @@ import org.springframework.http.ResponseEntity;
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class EurekaServerApplicationTests {
 
-    @Autowired
-    private TestRestTemplate testRestTemplate;
+  @Test
+  void contextLoads() {
+  }
 
-    @Test
-    void contextLoads() {
-    }
+  @Autowired
+  private TestRestTemplate testRestTemplate;
 
-    @Test
-    void catalogLoads() {
+  @Test
+  void catalogLoads() {
 
-        String expectedReponseBody = "{\"applications\":{\"versions__delta\":\"1\",\"apps__hashcode\":\"\",\"application\":[]}}";
-        ResponseEntity<String> entity = testRestTemplate.getForEntity("/eureka/apps", String.class);
-        assertEquals(HttpStatus.OK, entity.getStatusCode());
-        assertEquals(expectedReponseBody, entity.getBody());
-    }
+    String expectedReponseBody = "{\"applications\":{\"versions__delta\":\"1\",\"apps__hashcode\":\"\",\"application\":[]}}";
+    ResponseEntity<String> entity = testRestTemplate.getForEntity("/eureka/apps", String.class);
+    assertEquals(HttpStatus.OK, entity.getStatusCode());
+    assertEquals(expectedReponseBody, entity.getBody());
+  }
 
-    @Test
-    void healthy() {
-        String expectedReponseBody = "{\"status\":\"UP\"}";
-        ResponseEntity<String> entity = testRestTemplate.getForEntity("/actuator/health", String.class);
-        assertEquals(HttpStatus.OK, entity.getStatusCode());
-        assertEquals(expectedReponseBody, entity.getBody());
-    }
+  @Test
+  void healthy() {
+    String expectedReponseBody = "{\"status\":\"UP\"}";
+    ResponseEntity<String> entity = testRestTemplate.getForEntity("/actuator/health", String.class);
+    assertEquals(HttpStatus.OK, entity.getStatusCode());
+    assertEquals(expectedReponseBody, entity.getBody());
+  }
 }
 
